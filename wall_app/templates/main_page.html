@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Dojo Wall</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div id=container>
+        <div id="header">
+            <h1>CodingDojo Wall</h1>
+            <h1>Welcome, {{current_user.first_name}}</h1>
+            <a href="/logout">Logout</a>
+        </div>
+        <div id="post_mess">
+            <h3>Post a message:</h3>
+            <form action="/wall/post_message" method="POST">
+                {% csrf_token %}
+                <textarea name="message"></textarea>
+                <input id="wall_button" type="submit" value="Post a message">
+            </form>
+        </div>
+        <div id="message_board">
+            {% for one_message in all_messages.all %}
+            <h4>{{one_message.posted_by.first_name}} {{one_message.posted_by.last_name}}--{{one_message.created_at}}
+            </h4>
+            <p>{{one_message.message}}</p><br>
+            <div id="comments">
+                {% for comment in one_message.comments_on.all %}
+                <h4>{{comment.posted_by.first_name}} {{comment.posted_by.last_name}}--{{comment.created_at}}</h4>
+                <p>{{comment.comment}}</p><br>
+                {% endfor %}
+
+                <form action="/wall/post_comment/{{one_message.id}}" method="POST">
+                    {% csrf_token %}
+                    <textarea name="comment"></textarea>
+                    <input id="wall_button" type="submit" value="Post a comment">
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
